@@ -162,7 +162,8 @@ class WooCommerce {
 
     Map<String, dynamic> json = jsonDecode(response.content());
 
-    print(json['nonce']);
+    print("GET NONCE: "+json['nonce']);
+    print("GET NONCE BODY: "+response.content());
     return json['nonce'];
   }
 
