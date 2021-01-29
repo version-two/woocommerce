@@ -45,6 +45,7 @@ import "dart:math";
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 import 'package:woocommerce/models/customer_download.dart';
 import 'package:woocommerce/models/payment_gateway.dart';
 import 'package:woocommerce/models/shipping_zone_method.dart';
@@ -157,9 +158,9 @@ class WooCommerce {
   }
 
   Future<String> getNonce() async {
-    http.Response response = await http.get(this.baseUrl+'/wp-json/wc/store/nonce');
+    var response = await Requests.get(this.baseUrl + '/wp-json/wc/store/nonce');
 
-    Map<String, dynamic> json = jsonDecode(response.body);
+    Map<String, dynamic> json = jsonDecode(response.content());
 
     print(json['nonce']);
     return json['nonce'];
@@ -188,20 +189,20 @@ class WooCommerce {
       'password': password,
     };
 
-    final response = await http.post(
+    final response = await Requests.post(
       this.baseUrl + URL_JWT_TOKEN,
       body: body,
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       WooJWTResponse authResponse =
-          WooJWTResponse.fromJson(json.decode(response.body));
+          WooJWTResponse.fromJson(json.decode(response.content()));
       _authToken = authResponse.token;
       _localDbService.updateSecurityToken(_authToken);
       _urlHeader['Authorization'] = 'Bearer ${authResponse.token}';
       return _authToken;
     } else {
-      throw new WooCommerceError.fromJson(json.decode(response.body));
+      throw new WooCommerceError.fromJson(json.decode(response.content()));
     }
   }
 
@@ -242,10 +243,10 @@ class WooCommerce {
     _authToken = await _localDbService.getSecurityToken();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     final response =
-        await http.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
+        await Requests.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
       if (jsonStr.length == 0)
         throw new WooCommerceError(
             code: 'wp_empty_user',
@@ -254,7 +255,7 @@ class WooCommerce {
       return jsonStr['id'];
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1035,19 +1036,19 @@ class WooCommerce {
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     _urlHeader['X-WC-Store-API-Nonce'] = await getNonce();
 
-    final response = await http.post(
+    final response = await Requests.post(
         this.baseUrl + URL_STORE_API_PATH + 'cart/items',
         headers: _urlHeader,
         body: data);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
 
       _printToLog('added to my cart : ' + jsonStr.toString());
       return WooCartItem.fromJson(jsonStr);
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1059,12 +1060,12 @@ class WooCommerce {
   Future<List<WooCartItem>> getMyCartItems() async {
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
-    final response = await http.get(
+    final response = await Requests.get(
         this.baseUrl + URL_STORE_API_PATH + 'cart/items',
         headers: _urlHeader);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
       List<WooCartItem> cartItems = [];
       _printToLog('response gotten : ' + response.toString());
       for (var p in jsonStr) {
@@ -1076,9 +1077,9 @@ class WooCommerce {
       _printToLog('account user fetch : ' + jsonStr.toString());
       return cartItems;
     } else {
-      _printToLog(' error : ' + response.body);
+      _printToLog(' error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1089,17 +1090,18 @@ class WooCommerce {
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     WooCart cart;
-    final response = await http.get(this.baseUrl + URL_STORE_API_PATH + 'cart',
+    final response = await Requests.get(
+        this.baseUrl + URL_STORE_API_PATH + 'cart',
         headers: _urlHeader);
     _printToLog('response gotten : ' + response.toString());
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
       cart = WooCart.fromJson(jsonStr);
       return cart;
     } else {
-      _printToLog(' error : ' + response.body);
+      _printToLog(' error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1112,23 +1114,23 @@ class WooCommerce {
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
 
-    final http.Response response = await http.delete(
+    final response = await Requests.delete(
       this.baseUrl + URL_STORE_API_PATH + 'cart/items/' + key,
       headers: _urlHeader,
     );
-    _printToLog('response of delete cart  : ' + response.body.toString());
+    _printToLog('response of delete cart  : ' + response.content().toString());
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       _printToLog(
-          'response of delete cart oooo   : ' + response.body.toString());
-      //final jsonStr = json.decode(response.body);
+          'response of delete cart oooo   : ' + response.content().toString());
+      //final jsonStr = json.decode(response.content());
 
       //_printToLog('added to my cart : '+jsonStr.toString());
       //return WooCartItem.fromJson(jsonStr);
-      return response.body;
+      return response.content();
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1137,17 +1139,17 @@ class WooCommerce {
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
 
-    final http.Response response = await http.delete(
+    final response = await Requests.delete(
       this.baseUrl + URL_STORE_API_PATH + 'cart/items/',
       headers: _urlHeader,
     );
-    _printToLog('response of delete cart  : ' + response.body.toString());
+    _printToLog('response of delete cart  : ' + response.content().toString());
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.body;
+      return response.content();
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1158,18 +1160,18 @@ class WooCommerce {
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     WooCartItem cartItem;
-    final response = await http.get(
+    final response = await Requests.get(
         this.baseUrl + URL_STORE_API_PATH + 'cart/items/' + key,
         headers: _urlHeader);
     _printToLog('response gotten : ' + response.toString());
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
       cartItem = WooCartItem.fromJson(jsonStr);
       return cartItem;
     } else {
-      _printToLog('error : ' + response.body);
+      _printToLog('error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1187,19 +1189,19 @@ class WooCommerce {
     if (variations != null) data['variations'] = variations;
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
-    final response = await http.put(
+    final response = await Requests.put(
         this.baseUrl + URL_STORE_API_PATH + 'cart/items/' + key,
         headers: _urlHeader,
         body: data);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final jsonStr = json.decode(response.body);
+      final jsonStr = json.decode(response.content());
 
       _printToLog('added to my cart : ' + jsonStr.toString());
       return WooCartItem.fromJson(jsonStr);
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.body));
+          WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1732,14 +1734,15 @@ class WooCommerce {
     }
   }
 
-  Exception _handleHttpError(http.Response response) {
+  Exception _handleHttpError(var response) {
     switch (response.statusCode) {
       case 400:
       case 401:
       case 404:
       case 500:
         throw Exception(
-            WooCommerceError.fromJson(json.decode(response.body)).toString());
+            WooCommerceError.fromJson(json.decode(response.content()))
+                .toString());
       default:
         throw Exception(
             "An error occurred, status code: ${response.statusCode}");
@@ -1811,9 +1814,9 @@ class WooCommerce {
     headers.putIfAbsent('Accept', () => 'application/json charset=utf-8');
     // 'Authorization': _bearerToken,
     try {
-      final http.Response response = await http.get(url);
+      final Response response = await Requests.get(url);
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return json.decode(response.content());
       }
       _handleHttpError(response);
     } on SocketException {
