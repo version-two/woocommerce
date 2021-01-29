@@ -157,9 +157,12 @@ class WooCommerce {
   }
 
   Future<String> getNonce() async {
-    var response = await oldget('wc/store/nonce');
-    print(response['nonce']);
-    return response['nonce'];
+    http.Response response = await http.get(this.baseUrl+'/wc/store/nonce');
+
+    Map<String, dynamic> json = jsonDecode(response.body);
+
+    print(json['nonce']);
+    return json['nonce'];
   }
 
   String _authToken;
