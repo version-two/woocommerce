@@ -157,7 +157,7 @@ class WooCommerce {
   }
 
   Future<String> getNonce() async {
-    var response = await get('wc/store/nonce');
+    var response = await oldget('wc/store/nonce');
     print(response['nonce']);
     return response['nonce'];
   }
