@@ -157,7 +157,7 @@ class WooCommerce {
   }
 
   Future<String> getNonce() async {
-    http.Response response = await http.get(this.baseUrl+'/wc/store/nonce');
+    http.Response response = await http.get(this.baseUrl+'/wp-json/wc/store/nonce');
 
     Map<String, dynamic> json = jsonDecode(response.body);
 
