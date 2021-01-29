@@ -1030,6 +1030,8 @@ class WooCommerce {
     if (variations != null) data['variations'] = variations;
     await getAuthTokenFromDb();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
+    _urlHeader['X-WC-Store-API-Nonce'] = await getNonce();
+
     final response = await http.post(
         this.baseUrl + URL_STORE_API_PATH + 'cart/items',
         headers: _urlHeader,
