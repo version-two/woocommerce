@@ -47,6 +47,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:requests/requests.dart';
 import 'package:woocommerce/models/customer_download.dart';
+import 'package:woocommerce/models/iterable_response.dart';
 import 'package:woocommerce/models/payment_gateway.dart';
 import 'package:woocommerce/models/shipping_zone_method.dart';
 
@@ -421,7 +422,7 @@ class WooCommerce {
   /// Returns a list of all [WooProduct], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#products.
-  Future<List<WooProduct>> getProducts(
+  Future<WooIterableResponse> getProducts(
       {int page,
       int perPage,
       String search,
@@ -486,16 +487,21 @@ class WooCommerce {
     //_printToLog("Parameters: " + payload.toString());
     List<WooProduct> products = [];
     _setApiResourceUrl(path: 'products', queryParameters: payload);
-    final response = await get(queryUri.toString());
-    _printToLog('response gotten : ' + response.toString());
-    _printToLog('this is the queri uri : ' + queryUri.toString());
+    final Response response = await getResponse(queryUri.toString());
+    //_printToLog('response gotten : ' + response.toString());
+    //_printToLog('this is the queri uri : ' + queryUri.toString());
 
-    for (var p in response) {
+    WooIterableResponse iterableResponse = new WooIterableResponse();
+    iterableResponse.totalPages = response.headers['x-wp-totalpages'] ?? 0;
+    iterableResponse.totalItems = response.headers['x-wp-total'] ?? 0;
+    iterableResponse.items = <WooProduct>[];
+
+    for (var p in response.json()) {
       var prod = WooProduct.fromJson(p);
       _printToLog('product gotten here : ' + prod.name.toString());
-      products.add(prod);
+      iterableResponse.items.add(prod);
     }
-    return products;
+    return iterableResponse;
   }
 
   /// Returns a [WooProduct], with the specified [id].
@@ -1820,6 +1826,25 @@ class WooCommerce {
       _printToLog("Response headers: " + response.headers.toString());
       if (response.statusCode == 200) {
         return json.decode(response.content());
+      }
+      _handleHttpError(response);
+    } on SocketException {
+      throw Exception('No Internet connection.');
+    }
+  }
+
+  Future<Response> getResponse(String endPoint) async {
+    String url = this._getOAuthURL("GET", endPoint);
+    String _token = await _localDbService.getSecurityToken();
+    String _bearerToken = "Bearer $_token";
+    _printToLog('this is the bearer token : ' + _bearerToken);
+    Map<String, String> headers = new HashMap();
+    headers.putIfAbsent('Accept', () => 'application/json charset=utf-8');
+    // 'Authorization': _bearerToken,
+    try {
+      final Response response = await Requests.get(url);
+      if (response.statusCode == 200) {
+        return response;
       }
       _handleHttpError(response);
     } on SocketException {
