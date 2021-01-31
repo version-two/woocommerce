@@ -162,8 +162,8 @@ class WooCommerce {
 
     Map<String, dynamic> json = jsonDecode(response.content());
 
-    print("GET NONCE: "+json['nonce']);
-    print("GET NONCE BODY: "+response.content());
+    //print("GET NONCE: "+json['nonce']);
+    //print("GET NONCE BODY: "+response.content());
     return json['nonce'];
   }
 
@@ -483,12 +483,13 @@ class WooCommerce {
       if (v != null) payload[k] = v.toString();
     });
 
-    _printToLog("Parameters: " + payload.toString());
+    //_printToLog("Parameters: " + payload.toString());
     List<WooProduct> products = [];
     _setApiResourceUrl(path: 'products', queryParameters: payload);
     final response = await get(queryUri.toString());
     _printToLog('response gotten : ' + response.toString());
     _printToLog('this is the queri uri : ' + queryUri.toString());
+
     for (var p in response) {
       var prod = WooProduct.fromJson(p);
       _printToLog('product gotten here : ' + prod.name.toString());
@@ -1816,6 +1817,7 @@ class WooCommerce {
     // 'Authorization': _bearerToken,
     try {
       final Response response = await Requests.get(url);
+      _printToLog("Response headers: " + response.headers.toString());
       if (response.statusCode == 200) {
         return json.decode(response.content());
       }
