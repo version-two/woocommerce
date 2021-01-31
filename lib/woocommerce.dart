@@ -492,8 +492,8 @@ class WooCommerce {
     //_printToLog('this is the queri uri : ' + queryUri.toString());
 
     WooIterableResponse iterableResponse = new WooIterableResponse();
-    iterableResponse.totalPages = response.headers['x-wp-totalpages'] ?? 0;
-    iterableResponse.totalItems = response.headers['x-wp-total'] ?? 0;
+    iterableResponse.totalPages = int.parse(response.headers['x-wp-totalpages']) ?? 0;
+    iterableResponse.totalItems = int.parse(response.headers['x-wp-total']) ?? 0;
     iterableResponse.items = <WooProduct>[];
 
     for (var p in response.json()) {
