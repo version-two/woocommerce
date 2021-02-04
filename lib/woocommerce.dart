@@ -493,9 +493,13 @@ class WooCommerce {
     //_printToLog('response gotten : ' + response.toString());
     //_printToLog('this is the queri uri : ' + queryUri.toString());
 
+    //printWrapped(response.content().toString());
+
     WooIterableResponse iterableResponse = new WooIterableResponse();
-    iterableResponse.totalPages = int.parse(response.headers['x-wp-totalpages']) ?? 0;
-    iterableResponse.totalItems = int.parse(response.headers['x-wp-total']) ?? 0;
+    iterableResponse.totalPages =
+        int.parse(response.headers['x-wp-totalpages']) ?? 0;
+    iterableResponse.totalItems =
+        int.parse(response.headers['x-wp-total']) ?? 0;
     iterableResponse.items = <WooProduct>[];
 
     for (var p in response.json()) {
@@ -504,6 +508,11 @@ class WooCommerce {
       iterableResponse.items.add(prod);
     }
     return iterableResponse;
+  }
+
+  void printWrapped(String text) {
+    final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
 
   /// Returns a [WooProduct], with the specified [id].
@@ -718,7 +727,7 @@ class WooCommerce {
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-categories
 
-  Future<List<WooProductCategory>> getProductCategories(
+  Future<WooIterableResponse> getProductCategories(
       {int page,
       int perPage,
       String search,
@@ -747,17 +756,23 @@ class WooCommerce {
       if (v != null) payload[k] = v.toString();
     });
 
-    List<WooProductCategory> productCategories = [];
-    _printToLog('payload : ' + payload.toString());
     _setApiResourceUrl(path: 'products/categories', queryParameters: payload);
-    _printToLog('this is the path : ' + this.apiPath);
-    final response = await get(queryUri.toString());
-    for (var c in response) {
+
+    final response = await getResponse(queryUri.toString());
+
+    WooIterableResponse iterableResponse = new WooIterableResponse();
+    iterableResponse.totalPages =
+        int.parse(response.headers['x-wp-totalpages']) ?? 0;
+    iterableResponse.totalItems =
+        int.parse(response.headers['x-wp-total']) ?? 0;
+    iterableResponse.items = <WooProductCategory>[];
+
+    for (var c in response.json()) {
       var cat = WooProductCategory.fromJson(c);
-      _printToLog('category gotten here : ' + cat.toString());
-      productCategories.add(cat);
+      iterableResponse.items.add(cat);
     }
-    return productCategories;
+
+    return iterableResponse;
   }
 
   /// Returns a [WooProductCategory], with the specified [categoryId].
@@ -1854,7 +1869,7 @@ class WooCommerce {
     }
   }
 
-  Future<dynamic> oldget(String endPoint) async {
+  Future<dynamic> oldGet(String endPoint) async {
     String url = this._getOAuthURL("GET", endPoint);
 
     http.Client client = http.Client();
@@ -1912,7 +1927,7 @@ class WooCommerce {
 
   /// Make a custom delete request to Woocommerce, using WooCommerce SDK.
 
-  Future<dynamic> Oldelete(String endPoint, Map data) async {
+  Future<dynamic> oldDelete(String endPoint, Map data) async {
     String url = this._getOAuthURL("DELETE", endPoint);
 
     http.Client client = http.Client();

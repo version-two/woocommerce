@@ -62,10 +62,14 @@ class WooProductCategory {
     parent = json['parent'];
     description = json['description'];
     display = json['display'];
-    image = json['image'] != null ? new WooProductCategoryImage.fromJson(json['image']) : null;
+    image = json['image'] != null
+        ? new WooProductCategoryImage.fromJson(json['image'])
+        : null;
     menuOrder = json['menu_order'];
     count = json['count'];
-    links = json['_links'] != null ? new WooProductCategoryLinks.fromJson(json['_links']) : null;
+    links = json['_links'] != null
+        ? new WooProductCategoryLinks.fromJson(json['_links'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -86,7 +90,9 @@ class WooProductCategory {
     }
     return data;
   }
-  @override toString() => this.toJson().toString();
+
+  @override
+  toString() => this.toJson().toString();
 }
 
 class WooProductCategoryImage {
