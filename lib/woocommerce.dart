@@ -1806,6 +1806,11 @@ class WooCommerce {
     return _authToken;
   }
 
+  setAuthToken(String token) async {
+    _authToken = token;
+    _localDbService.updateSecurityToken(_authToken);
+  }
+
   // Sets the Uri for an endpoint.
   String _setApiResourceUrl({
     @required String path,
