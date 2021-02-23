@@ -238,7 +238,7 @@ class WooCommerce {
     }
   }
 
-  /// Fetches already authenticated user, using Jwt
+  /// Fetches id of already authenticated user , using Jwt
   ///
   /// Associated endpoint : /wp-json/wp/v2/users/me
   Future<int> fetchLoggedInUserId() async {
@@ -249,13 +249,37 @@ class WooCommerce {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final jsonStr = json.decode(response.content());
-      print(response.content());
+      //print(response.toString());
       if (jsonStr.length == 0)
         throw new WooCommerceError(
             code: 'wp_empty_user',
-            message: "No user found or you dont have permission");
+            message: "No user found or you don't have permission");
       _printToLog('account user fetch : ' + jsonStr.toString());
       return jsonStr['id'];
+    } else {
+      WooCommerceError err =
+          WooCommerceError.fromJson(json.decode(response.content()));
+      throw err;
+    }
+  }
+
+  /// Fetches already authenticated user, using Jwt
+  ///
+  /// Associated endpoint : /wp-json/wp/v2/users/me
+  Future<Map<String, dynamic>> fetchLoggedInUser() async {
+    _authToken = await _localDbService.getSecurityToken();
+    _urlHeader['Authorization'] = 'Bearer ' + _authToken;
+    final response =
+        await Requests.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final jsonStr = json.decode(response.content());
+      if (jsonStr.length == 0)
+        throw new WooCommerceError(
+            code: 'wp_empty_user',
+            message: "No user found or you don't have permission");
+      _printToLog('account user fetch : ' + jsonStr.toString());
+      return jsonStr;
     } else {
       WooCommerceError err =
           WooCommerceError.fromJson(json.decode(response.content()));
@@ -269,7 +293,7 @@ class WooCommerce {
     await _localDbService.deleteSecurityToken();
   }
 
-  /// Creates a new Wordpress user and returns whether action was sucessful or not using WP Rest User Wordpress plugin.
+  /// Creates a new WordPress user and returns whether action was successful or not using WP Rest User WordPress plugin.
   ///
   /// Associated endpoint : /register .
 
@@ -293,7 +317,7 @@ class WooCommerce {
     }
   }
 
-  /// Creates a new Woocommerce Customer and returns the customer object.
+  /// Creates a new WooCommerce Customer and returns the customer object.
   ///
   /// Accepts a customer object as required parameter.
   Future<bool> createCustomer(WooCustomer customer) async {
@@ -1886,7 +1910,7 @@ class WooCommerce {
     return dataResponse;
   }
 
-  /// Make a custom post request to Woocommerce, using WooCommerce SDK.
+  /// Make a custom post request to WooCommerce, using WooCommerce SDK.
 
   Future<dynamic> post(
     String endPoint,
@@ -1908,7 +1932,7 @@ class WooCommerce {
     return dataResponse;
   }
 
-  /// Make a custom put request to Woocommerce, using WooCommerce SDK.
+  /// Make a custom put request to WooCommerce, using WooCommerce SDK.
 
   Future<dynamic> put(String endPoint, Map data) async {
     String url = this._getOAuthURL("PUT", endPoint);
@@ -1926,7 +1950,7 @@ class WooCommerce {
     return dataResponse;
   }
 
-  /// Make a custom delete request to Woocommerce, using WooCommerce SDK.
+  /// Make a custom delete request to WooCommerce, using WooCommerce SDK.
 
   Future<dynamic> oldDelete(String endPoint, Map data) async {
     String url = this._getOAuthURL("DELETE", endPoint);
