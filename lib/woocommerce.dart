@@ -270,7 +270,7 @@ class WooCommerce {
     _authToken = await _localDbService.getSecurityToken();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     final response =
-        await Requests.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
+        await Requests.get(this.baseUrl + URL_USER_ME+"?context=edit", headers: _urlHeader);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final jsonStr = json.decode(response.content());
