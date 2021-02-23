@@ -32,6 +32,7 @@
  */
 
 import 'package:flutter/material.dart';
+
 class WooOrder {
   int id;
   int parentId;
@@ -118,7 +119,8 @@ class WooOrder {
       this.feeLines,
       this.couponLines,
       this.refunds,
-      this.links}) : assert (id != null);
+      this.links})
+      : assert(id != null);
 
   WooOrder.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -268,7 +270,9 @@ class WooOrder {
     }
     return data;
   }
-  @override toString() => this.toJson().toString();
+
+  @override
+  toString() => this.toJson().toString();
 }
 
 class WooOrderCouponLine {
@@ -311,8 +315,8 @@ class WooOrderFeeLine {
   List<FeeLineTax> taxes;
   List<MetaData> metaData;
 
-  WooOrderFeeLine(this.id, this.name, this.taxClass, this.taxStatus, this.totalTax,
-      this.taxes, this.metaData);
+  WooOrderFeeLine(this.id, this.name, this.taxClass, this.taxStatus,
+      this.totalTax, this.taxes, this.metaData);
 
   WooOrderFeeLine.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -491,7 +495,7 @@ class Shipping {
 class MetaData {
   int id;
   String key;
-  String value;
+  dynamic value;
 
   MetaData({this.id, this.key, this.value});
 
@@ -604,7 +608,9 @@ class LineItems {
     data['price'] = this.price;
     return data;
   }
-  @override toString() => this.toJson().toString();
+
+  @override
+  toString() => this.toJson().toString();
 }
 
 class Taxes {
