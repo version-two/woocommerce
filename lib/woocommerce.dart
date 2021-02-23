@@ -191,8 +191,6 @@ class WooCommerce {
       'password': password,
     };
 
-    print('JWT endpoint: ${this.baseUrl + URL_JWT_TOKEN}');
-
     final response = await Requests.post(
       this.baseUrl + URL_JWT_TOKEN,
       body: body,
@@ -251,6 +249,7 @@ class WooCommerce {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final jsonStr = json.decode(response.content());
+      print(response.content());
       if (jsonStr.length == 0)
         throw new WooCommerceError(
             code: 'wp_empty_user',
