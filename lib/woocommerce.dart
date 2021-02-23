@@ -191,6 +191,8 @@ class WooCommerce {
       'password': password,
     };
 
+    print('JWT endpoint: ${this.baseUrl + URL_JWT_TOKEN}');
+
     final response = await Requests.post(
       this.baseUrl + URL_JWT_TOKEN,
       body: body,
