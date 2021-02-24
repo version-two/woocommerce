@@ -1695,7 +1695,14 @@ class WooCommerce {
             'orders/${orderId.toString()}/notes',
         headers: _urlHeader,
         body: {'note': note});
-    //
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print('comment added');
+    } else {
+      WooCommerceError err =
+          WooCommerceError.fromJson(json.decode(response.content()));
+      throw err;
+    }
   }
 
   /// Updates an existing order and returns the [WooPaymentGateway] object.
