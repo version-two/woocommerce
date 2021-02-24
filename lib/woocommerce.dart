@@ -1673,7 +1673,7 @@ class WooCommerce {
   /// Returns a [List<Map<String, dynamic>>]
 
   Future<List<Map<String, dynamic>>> getAllOrderNotes(int orderId) async {
-    _setApiResourceUrl(path: 'order/${orderId.toString()}/notes');
+    _setApiResourceUrl(path: 'orders/${orderId.toString()}/notes');
     final response = await get(queryUri.toString());
     return response;
   }
@@ -1682,7 +1682,7 @@ class WooCommerce {
 
   Future<List<Map<String, dynamic>>> createOrderNote(
       int orderId, String note) async {
-    _setApiResourceUrl(path: 'order/${orderId.toString()}/notes');
+    _setApiResourceUrl(path: 'orders/${orderId.toString()}/notes');
     final response = await post(queryUri.toString(), {'note': note});
     return response;
   }
