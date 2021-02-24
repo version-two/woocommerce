@@ -1686,13 +1686,12 @@ class WooCommerce {
   /// Creates order note
 
   Future<void> createOrderNote(int orderId, String note) async {
+    String url = this._getOAuthURL("GET", 'orders/${orderId.toString()}/notes');
     _authToken = await _localDbService.getSecurityToken();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
 
     final response = await Requests.post(
-        this.baseUrl +
-            URL_STORE_API_PATH +
-            'orders/${orderId.toString()}/notes',
+        url,
         headers: _urlHeader,
         body: {'note': note});
 
