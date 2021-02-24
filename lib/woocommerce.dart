@@ -1686,9 +1686,12 @@ class WooCommerce {
   /// Creates order note
 
   Future<void> createOrderNote(int orderId, String note) async {
-    _setApiResourceUrl(path: 'orders/${orderId.toString()}/notes');
-    final response = await Requests.post(queryUri.toString(),
-        headers: _urlHeader, body: {'note': note});
+    final response = await Requests.post(
+        this.baseUrl +
+            URL_STORE_API_PATH +
+            'orders/${orderId.toString()}/notes',
+        headers: _urlHeader,
+        body: {'note': note});
     //
   }
 
