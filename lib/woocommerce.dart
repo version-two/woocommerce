@@ -1685,24 +1685,18 @@ class WooCommerce {
 
   /// Creates order note
 
-  Future<void> createOrderNote(int orderId, String note) async {
+  Future<bool> createOrderNote(int orderId, String note) async {
     String url = this._getOAuthURL("GET", 'orders/${orderId.toString()}/notes');
     _authToken = await _localDbService.getSecurityToken();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
 
-    final response = await Requests.post(
-        url,
-        headers: _urlHeader,
-        body: {'note': note});
+    final response =
+        await Requests.post(url, headers: _urlHeader, body: {'note': note});
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      print('comment added');
-    } else {
-      WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
-      print("Error: "+err.message);
-      throw err;
+      return true;
     }
+    return false;
   }
 
   /// Updates an existing order and returns the [WooPaymentGateway] object.
