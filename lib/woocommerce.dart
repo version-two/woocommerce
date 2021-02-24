@@ -1685,11 +1685,9 @@ class WooCommerce {
 
   /// Creates order note
 
-  Future<List<Map<String, dynamic>>> createOrderNote(
-      int orderId, String note) async {
+  Future<void> createOrderNote(int orderId, String note) async {
     _setApiResourceUrl(path: 'orders/${orderId.toString()}/notes');
-    final response = await post(queryUri.toString(), {'note': note});
-    return response;
+    await post(queryUri.toString(), {'note': note});
   }
 
   /// Updates an existing order and returns the [WooPaymentGateway] object.
