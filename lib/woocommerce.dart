@@ -1357,6 +1357,7 @@ class WooCommerce {
       path: 'orders/' + id.toString(),
     );
     final response = await put(queryUri.toString(), orderMap);
+    printWrapped(response);
     return WooOrder.fromJson(response);
   }
 
