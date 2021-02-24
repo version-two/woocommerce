@@ -1675,7 +1675,8 @@ class WooCommerce {
   Future<List<Map<String, dynamic>>> getAllOrderNotes(int orderId) async {
     _setApiResourceUrl(path: 'orders/${orderId.toString()}/notes');
     final List response = await get(queryUri.toString());
-    List<Map<String, dynamic>> maps;
+    List<Map<String, dynamic>> maps = [];
+
     response.forEach((element) {
       maps.add(element);
     });
