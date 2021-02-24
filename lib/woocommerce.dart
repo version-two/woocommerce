@@ -1701,6 +1701,7 @@ class WooCommerce {
     } else {
       WooCommerceError err =
           WooCommerceError.fromJson(json.decode(response.content()));
+      print("Error: "+err.message);
       throw err;
     }
   }
