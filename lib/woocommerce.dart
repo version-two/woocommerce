@@ -198,7 +198,7 @@ class WooCommerce {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       WooJWTResponse authResponse =
-          WooJWTResponse.fromJson(json.decode(response.content()));
+      WooJWTResponse.fromJson(json.decode(response.content()));
       _authToken = authResponse.token;
       _localDbService.updateSecurityToken(_authToken);
       _urlHeader['Authorization'] = 'Bearer ${authResponse.token}';
@@ -216,7 +216,7 @@ class WooCommerce {
     WooCustomer customer;
     try {
       var response =
-          await authenticateViaJWT(username: username, password: password);
+      await authenticateViaJWT(username: username, password: password);
       _printToLog('attempted token : ' + response.toString());
       if (response is String) {
         int id = await fetchLoggedInUserId();
@@ -245,7 +245,7 @@ class WooCommerce {
     _authToken = await _localDbService.getSecurityToken();
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
     final response =
-        await Requests.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
+    await Requests.get(this.baseUrl + URL_USER_ME, headers: _urlHeader);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final jsonStr = json.decode(response.content());
@@ -258,7 +258,7 @@ class WooCommerce {
       return jsonStr['id'];
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -290,7 +290,7 @@ class WooCommerce {
       return jsonStr;
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -311,11 +311,11 @@ class WooCommerce {
     http.Client client = http.Client();
     http.Request request = http.Request('POST', Uri.parse(url));
     request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    'application/json; charset=utf-8';
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     request.body = json.encode(user.toJson());
     String response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    await client.send(request).then((res) => res.stream.bytesToString());
     var dataResponse = await json.decode(response);
     _printToLog('registerNewUser response : ' + dataResponse.toString());
     if (dataResponse['data'] == null) {
@@ -345,17 +345,16 @@ class WooCommerce {
   /// Returns a list of all [WooCustomer], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#customers
-  Future<List<WooCustomer>> getCustomers(
-      {int page,
-      int perPage,
-      String search,
-      List<int> exclude,
-      List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      //String email,
-      String role}) async {
+  Future<List<WooCustomer>> getCustomers({int page,
+    int perPage,
+    String search,
+    List<int> exclude,
+    List<int> include,
+    int offset,
+    String order,
+    String orderBy,
+    //String email,
+    String role}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -455,35 +454,34 @@ class WooCommerce {
   /// Returns a list of all [WooProduct], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#products.
-  Future<WooIterableResponse> getProducts(
-      {int page,
-      int perPage,
-      String search,
-      String after,
-      String before,
-      String order,
-      String orderBy,
-      String slug,
-      String status,
-      String type,
-      String sku,
-      String category,
-      String categoryOperator = 'in',
-      String tag,
-      String shippingClass,
-      String attribute,
-      String attributeTerm,
-      String taxClass,
-      String minPrice,
-      String maxPrice,
-      String stockStatus,
-      List<int> exclude,
-      List<int> parentExclude,
-      List<int> include,
-      List<int> parent,
-      int offset,
-      bool featured,
-      bool onSale}) async {
+  Future<WooIterableResponse> getProducts({int page,
+    int perPage,
+    String search,
+    String after,
+    String before,
+    String order,
+    String orderBy,
+    String slug,
+    String status,
+    String type,
+    String sku,
+    String category,
+    String categoryOperator = 'in',
+    String tag,
+    String shippingClass,
+    String attribute,
+    String attributeTerm,
+    String taxClass,
+    String minPrice,
+    String maxPrice,
+    String stockStatus,
+    List<int> exclude,
+    List<int> parentExclude,
+    List<int> include,
+    List<int> parent,
+    int offset,
+    bool featured,
+    bool onSale}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -564,26 +562,26 @@ class WooCommerce {
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-variations
   Future<List<WooProductVariation>> getProductVariations(
       {@required int productId,
-      int page,
-      int perPage,
-      String search,
-      String after,
-      String before,
-      List<int> exclude,
-      List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      List<int> parent,
-      List<int> parentExclude,
-      String slug,
-      String status,
-      String sku,
-      String taxClass,
-      bool onSale,
-      String minPrice,
-      String maxPrice,
-      String stockStatus}) async {
+        int page,
+        int perPage,
+        String search,
+        String after,
+        String before,
+        List<int> exclude,
+        List<int> include,
+        int offset,
+        String order,
+        String orderBy,
+        List<int> parent,
+        List<int> parentExclude,
+        String slug,
+        String status,
+        String sku,
+        String taxClass,
+        bool onSale,
+        String minPrice,
+        String maxPrice,
+        String stockStatus}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -697,17 +695,17 @@ class WooCommerce {
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-attribute-terms
   Future<List<WooProductAttributeTerm>> getProductAttributeTerms(
       {@required int attributeId,
-      int page,
-      int perPage,
-      String search,
-      List<int> exclude,
-      List<int> include,
-      String order,
-      String orderBy,
-      bool hideEmpty,
-      int parent,
-      int product,
-      String slug}) async {
+        int page,
+        int perPage,
+        String search,
+        List<int> exclude,
+        List<int> include,
+        String order,
+        String orderBy,
+        bool hideEmpty,
+        int parent,
+        int product,
+        String slug}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -760,18 +758,17 @@ class WooCommerce {
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-categories
 
-  Future<WooIterableResponse> getProductCategories(
-      {int page,
-      int perPage,
-      String search,
-      //List<int> exclude,
-      //List<int> include,
-      String order,
-      String orderBy,
-      bool hideEmpty,
-      int parent,
-      int product,
-      String slug}) async {
+  Future<WooIterableResponse> getProductCategories({int page,
+    int perPage,
+    String search,
+    //List<int> exclude,
+    //List<int> include,
+    String order,
+    String orderBy,
+    bool hideEmpty,
+    int parent,
+    int product,
+    String slug}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -825,18 +822,17 @@ class WooCommerce {
   /// Returns a list of all [WooProductShippingClass], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-shipping-classes
-  Future<List<WooProductShippingClass>> getProductShippingClasses(
-      {int page,
-      int perPage,
-      String search,
-      List<int> exclude,
-      List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      bool hideEmpty,
-      int product,
-      String slug}) async {
+  Future<List<WooProductShippingClass>> getProductShippingClasses({int page,
+    int perPage,
+    String search,
+    List<int> exclude,
+    List<int> include,
+    int offset,
+    String order,
+    String orderBy,
+    bool hideEmpty,
+    int product,
+    String slug}) async {
     Map<String, dynamic> payload = {};
     ({
       'page': page,
@@ -884,18 +880,17 @@ class WooCommerce {
   /// Returns a list of all [ProductTag], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-tags
-  Future<List<WooProductTag>> getProductTags(
-      {int page,
-      int perPage,
-      String search,
-      //List<int> exclude,
-      //List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      bool hideEmpty,
-      int product,
-      String slug}) async {
+  Future<List<WooProductTag>> getProductTags({int page,
+    int perPage,
+    String search,
+    //List<int> exclude,
+    //List<int> include,
+    int offset,
+    String order,
+    String orderBy,
+    bool hideEmpty,
+    int product,
+    String slug}) async {
     Map<String, dynamic> payload = {};
     ({
       'page': page, 'per_page': perPage, 'search': search,
@@ -935,14 +930,13 @@ class WooCommerce {
   /// Returns a  [WooProductReview] object.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-reviews
-  Future<WooProductReview> createProductReview(
-      {@required int productId,
-      int status,
-      @required String reviewer,
-      @required String reviewerEmail,
-      @required String review,
-      int rating,
-      bool verified}) async {
+  Future<WooProductReview> createProductReview({@required int productId,
+    int status,
+    @required String reviewer,
+    @required String reviewerEmail,
+    @required String review,
+    int rating,
+    bool verified}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -970,22 +964,21 @@ class WooCommerce {
   /// Returns a list of all [WooProductReview], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#product-reviews
-  Future<List<WooProductReview>> getProductReviews(
-      {int page,
-      int perPage,
-      String search,
-      String after,
-      String before,
-      //List<int> exclude,
-      //List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      List<int> reviewer,
-      //List<int> reviewerExclude,
-      //List<String> reviewerEmail,
-      List<int> product,
-      String status}) async {
+  Future<List<WooProductReview>> getProductReviews({int page,
+    int perPage,
+    String search,
+    String after,
+    String before,
+    //List<int> exclude,
+    //List<int> include,
+    int offset,
+    String order,
+    String orderBy,
+    List<int> reviewer,
+    //List<int> reviewerExclude,
+    //List<String> reviewerEmail,
+    List<int> product,
+    String status}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -1081,10 +1074,9 @@ class WooCommerce {
   /// Related endpoint : wc/store/cart
   ///
 
-  Future<WooCartItem> addToMyCart(
-      {@required String itemId,
-      @required String quantity,
-      List<WooProductVariation> variations}) async {
+  Future<WooCartItem> addToMyCart({@required String itemId,
+    @required String quantity,
+    List<WooProductVariation> variations}) async {
     Map<String, dynamic> data = {
       'id': itemId,
       'quantity': quantity,
@@ -1106,7 +1098,7 @@ class WooCommerce {
       return WooCartItem.fromJson(jsonStr);
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1137,7 +1129,7 @@ class WooCommerce {
     } else {
       _printToLog(' error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1159,7 +1151,7 @@ class WooCommerce {
     } else {
       _printToLog(' error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1188,7 +1180,7 @@ class WooCommerce {
       return response.content();
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1207,7 +1199,7 @@ class WooCommerce {
       return response.content();
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1229,16 +1221,15 @@ class WooCommerce {
     } else {
       _printToLog('error : ' + response.content());
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
 
-  Future<WooCartItem> updateMyCartItemByKey(
-      {@required String key,
-      @required int id,
-      @required int quantity,
-      List<WooProductVariation> variations}) async {
+  Future<WooCartItem> updateMyCartItemByKey({@required String key,
+    @required int id,
+    @required int quantity,
+    List<WooProductVariation> variations}) async {
     Map<String, dynamic> data = {
       'key': key,
       'id': id.toString(),
@@ -1259,7 +1250,7 @@ class WooCommerce {
       return WooCartItem.fromJson(jsonStr);
     } else {
       WooCommerceError err =
-          WooCommerceError.fromJson(json.decode(response.content()));
+      WooCommerceError.fromJson(json.decode(response.content()));
       throw err;
     }
   }
@@ -1279,24 +1270,23 @@ class WooCommerce {
   /// Returns a list of all [Order], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#orders
-  Future<List<WooOrder>> getOrders(
-      {int page,
-      int perPage,
-      String search,
-      String after,
-      String before,
-      List<int> exclude,
-      List<int> include,
-      int offset,
-      String order,
-      String orderBy,
-      List<int> parent,
-      List<int> parentExclude,
-      List<String>
-          status, // Options: any, pending, processing, on-hold, completed, cancelled, refunded, failed and trash. Default is any.
-      int customer,
-      int product,
-      int dp}) async {
+  Future<List<WooOrder>> getOrders({int page,
+    int perPage,
+    String search,
+    String after,
+    String before,
+    List<int> exclude,
+    List<int> include,
+    int offset,
+    String order,
+    String orderBy,
+    List<int> parent,
+    List<int> parentExclude,
+    List<String>
+    status, // Options: any, pending, processing, on-hold, completed, cancelled, refunded, failed and trash. Default is any.
+    int customer,
+    int product,
+    int dp}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -1469,13 +1459,12 @@ class WooCommerce {
   /// Returns a list of all [WooTaxRate], with filter options.
   ///
   /// Related endpoint: https://woocommerce.github.io/woocommerce-rest-api-docs/#tax-rates.
-  Future<List<WooTaxRate>> getTaxRates(
-      {int page,
-      int perPage,
-      int offset,
-      String order,
-      String orderBy,
-      String taxClass}) async {
+  Future<List<WooTaxRate>> getTaxRates({int page,
+    int perPage,
+    int offset,
+    String order,
+    String orderBy,
+    String taxClass}) async {
     Map<String, dynamic> payload = {};
 
     ({
@@ -1691,7 +1680,7 @@ class WooCommerce {
     _urlHeader['Authorization'] = 'Bearer ' + _authToken;
 
     final response =
-        await Requests.post(url, headers: _urlHeader, body: {'note': note});
+    await Requests.post(url, headers: _urlHeader, body: {'note': note});
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return true;
@@ -1731,13 +1720,13 @@ class WooCommerce {
       return url +
           (containsQueryParams == true
               ? "&consumer_key=" +
-                  this.consumerKey +
-                  "&consumer_secret=" +
-                  this.consumerSecret
+              this.consumerKey +
+              "&consumer_secret=" +
+              this.consumerSecret
               : "?consumer_key=" +
-                  this.consumerKey +
-                  "&consumer_secret=" +
-                  this.consumerSecret);
+              this.consumerKey +
+              "&consumer_secret=" +
+              this.consumerSecret);
     }
 
     Random rand = Random();
@@ -1749,7 +1738,9 @@ class WooCommerce {
     String nonce = String.fromCharCodes(codeUnits);
 
     /// The timestamp allows the Service Provider to only keep nonce values for a limited time
-    int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    int timestamp = DateTime
+        .now()
+        .millisecondsSinceEpoch ~/ 1000;
 
     String parameters = "oauth_consumer_key=" +
         consumerKey +
@@ -1793,7 +1784,7 @@ class WooCommerce {
 
     String signingKey = consumerSecret + "&" + token;
     crypto.Hmac hmacSha1 =
-        crypto.Hmac(crypto.sha1, utf8.encode(signingKey)); // HMAC-SHA1
+    crypto.Hmac(crypto.sha1, utf8.encode(signingKey)); // HMAC-SHA1
 
     /// The Signature is used by the server to verify the
     /// authenticity of the request and prevent unauthorized access.
@@ -1950,11 +1941,11 @@ class WooCommerce {
     http.Client client = http.Client();
     http.Request request = http.Request('GET', Uri.parse(url));
     request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    'application/json; charset=utf-8';
     //request.headers[HttpHeaders.authorizationHeader] = _token;
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     String response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    await client.send(request).then((res) => res.stream.bytesToString());
     var dataResponse = await json.decode(response);
     _handleError(dataResponse);
     return dataResponse;
@@ -1962,21 +1953,19 @@ class WooCommerce {
 
   /// Make a custom post request to WooCommerce, using WooCommerce SDK.
 
-  Future<dynamic> post(
-    String endPoint,
-    Map data,
-  ) async {
+  Future<dynamic> post(String endPoint,
+      Map data,) async {
     String url = this._getOAuthURL("POST", endPoint);
 
     http.Client client = http.Client();
     http.Request request = http.Request('POST', Uri.parse(url));
     request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    'application/json; charset=utf-8';
     //request.headers[HttpHeaders.authorizationHeader] = _bearerToken;
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     request.body = json.encode(data);
     String response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    await client.send(request).then((res) => res.stream.bytesToString());
     var dataResponse = await json.decode(response);
     _handleError(dataResponse);
     return dataResponse;
@@ -1990,11 +1979,11 @@ class WooCommerce {
     http.Client client = http.Client();
     http.Request request = http.Request('PUT', Uri.parse(url));
     request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    'application/json; charset=utf-8';
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     request.body = json.encode(data);
     String response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    await client.send(request).then((res) => res.stream.bytesToString());
     var dataResponse = await json.decode(response);
     _handleError(dataResponse);
     return dataResponse;
@@ -2008,12 +1997,12 @@ class WooCommerce {
     http.Client client = http.Client();
     http.Request request = http.Request('DELETE', Uri.parse(url));
     request.headers[HttpHeaders.contentTypeHeader] =
-        'application/json; charset=utf-8';
+    'application/json; charset=utf-8';
     //request.headers[HttpHeaders.authorizationHeader] = _urlHeader['Authorization'];
     request.headers[HttpHeaders.cacheControlHeader] = "no-cache";
     request.body = json.encode(data);
     final response =
-        await client.send(request).then((res) => res.stream.bytesToString());
+    await client.send(request).then((res) => res.stream.bytesToString());
     _printToLog("this is the delete's response : " + response.toString());
     var dataResponse = await json.decode(response);
     _handleHttpError(dataResponse);

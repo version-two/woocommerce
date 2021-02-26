@@ -35,6 +35,7 @@ class WooProductCategory {
   int id;
   String name;
   String slug;
+  String currency;
   int parent;
   String description;
   String display;
@@ -47,6 +48,7 @@ class WooProductCategory {
       {this.id,
       this.name,
       this.slug,
+      this.currency,
       this.parent,
       this.description,
       this.display,
@@ -58,6 +60,10 @@ class WooProductCategory {
   WooProductCategory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    slug = json['slug'];
+    if (json.containsKey('currency')) {
+      currency = json['currency'];
+    }
     slug = json['slug'];
     parent = json['parent'];
     description = json['description'];
@@ -77,6 +83,7 @@ class WooProductCategory {
     data['id'] = this.id;
     data['name'] = this.name;
     data['slug'] = this.slug;
+    data['currency'] = this.currency;
     data['parent'] = this.parent;
     data['description'] = this.description;
     data['display'] = this.display;
